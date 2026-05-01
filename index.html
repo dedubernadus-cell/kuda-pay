@@ -39,15 +39,26 @@
         
         /* Header Bagian Atas */
         .header {
-            padding: 24px 20px;
+            padding: 20px;
             background: linear-gradient(135deg, #1A1D2A 0%, #0F111A 100%);
             border-bottom: 1px solid #242936;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-brand img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
         .header h1 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: #D4AF37;
             font-weight: 700;
         }
@@ -321,7 +332,10 @@
 
     <div class="app-container">
         <header class="header">
-            <h1>⚡ $KUDA Pay</h1>
+            <div class="header-brand">
+                <img src="https://i.ibb.co.com/8n9hKHsT/IMG-20260408-142541.png" alt="Logo $KUDA Pay">
+                <h1>$KUDA Pay</h1>
+            </div>
             <div class="user-badge"><i class="fa-solid fa-wallet"></i> TON Mainnet</div>
         </header>
 
@@ -481,12 +495,10 @@
         const DISKON_KUDA = 0.05;
 
         function updateTotal() {
-            // Untuk perhitungan, kita pakai harga tiruan. 
-            // Jika Anda ingin mengambil dari harga riil, Anda bisa menyesuaikan nilainya (misal mengambil harga default dari select).
             const serviceSelect = document.getElementById('serviceType');
             const selectedValue = serviceSelect.value;
             
-            // Contoh harga otomatis sesuai SKU:
+            // Harga simulasi sesuai SKU
             let hargaIdr = 25500;
             if (selectedValue.includes('50')) {
                 hargaIdr = 50500;
@@ -538,7 +550,7 @@
             historyList.prepend(card);
         }
 
-        // Jalankan kalkulasi
+        // Jalankan kalkulasi awal
         updateTotal();
         updatePointUI();
 
@@ -557,6 +569,7 @@
             // Memanggil API Backend Vercel
             try {
                 // Catatan: Jika aplikasi di-deploy di Vercel, URL ini akan otomatis diarahkan ke serverless functions Anda.
+                // Jika backend belum aktif (Vercel API Key belum diset), ini akan loncat ke catch
                 const response = await fetch('/api/transaksi', {
                     method: 'POST',
                     headers: {
@@ -579,19 +592,25 @@
                     updatePointUI();
 
                     const isIdr = document.getElementById('methodIdr').checked;
-                    const priceString = isIdr ? `Rp ${document.getElementById('serviceType').value}` : "Token $KUDA";
+                    // Ambil summary text sebagai harga di riwayat
+                    const priceString = document.getElementById('summaryAmount').innerText.replace('Total Tagihan: ', '');
                     addTransactionHistory(selectedItem, priceString);
                 } else {
                     alert("Transaksi gagal dari penyedia: " + result.message);
                 }
             } catch (error) {
                 // Mode fallback/simulasi lokal jika backend belum di-deploy sepenuhnya
-                alert("Berhasil memproses (Simulasi)!");
+                alert("Berhasil memproses (Mode Simulasi)! Backend API belum aktif di server.");
+                
+                // Tambahkan poin dan update UI (Simulasi)
                 userPoints += 1;
                 updatePointUI();
-                const isIdr = document.getElementById('methodIdr').checked;
-                const priceString = isIdr ? `Transaksi` : "Token $KUDA";
-                addTransactionHistory(selectedItem, priceString);
+                
+                const selectedItemSim = serviceSelect.options[serviceSelect.selectedIndex].text;
+                const isIdrSim = document.getElementById('methodIdr').checked;
+                // Ambil summary text sebagai harga di riwayat
+                const priceStringSim = document.getElementById('summaryAmount').innerText.replace('Total Tagihan: ', '');
+                addTransactionHistory(selectedItemSim, priceStringSim);
             }
         }
     </script>
