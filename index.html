@@ -345,11 +345,11 @@
             </button>
             <button class="action-btn" onclick="alert('Membuka Scan QRIS.')">
                 <i class="fa-solid fa-qrcode"></i>
-                <span>QRIS Pay</span>
+                <span>QRIS</span>
             </button>
             <button class="action-btn" onclick="tukarPoin()">
                 <i class="fa-solid fa-gift"></i>
-                <span>Tukar Poin</span>
+                <span>Tukar</span>
             </button>
             <button class="action-btn" onclick="alert('Menampilkan Voucher & Diskon.')">
                 <i class="fa-solid fa-tags"></i>
@@ -360,11 +360,11 @@
         <div class="menu-section">
             <div class="section-title">Layanan Produk PPOB</div>
             <div class="services-grid">
-                <div class="service-item" onclick="document.getElementById('serviceType').value='25500'; updateTotal();">
+                <div class="service-item" onclick="document.getElementById('serviceType').value='htelkomsel25'; updateTotal();">
                     <i class="fa-solid fa-mobile-screen-button"></i>
                     <span>Pulsa</span>
                 </div>
-                <div class="service-item" onclick="document.getElementById('serviceType').value='101500'; updateTotal();">
+                <div class="service-item" onclick="document.getElementById('serviceType').value='pln100'; updateTotal();">
                     <i class="fa-solid fa-lightbulb"></i>
                     <span>Listrik</span>
                 </div>
@@ -399,11 +399,11 @@
             <div class="section-title">Formulir Pembelian</div>
             
             <div class="form-group">
-                <label for="serviceType">Pilih Layanan</label>
+                <label for="serviceType">Pilih Produk & Layanan</label>
                 <select id="serviceType" class="form-control" onchange="updateTotal()">
-                    <option value="25500" data-name="Pulsa Telkomsel Rp 25.000">📱 Pulsa Telkomsel Rp 25.000</option>
-                    <option value="50500" data-name="Pulsa Telkomsel Rp 50.000">📱 Pulsa Telkomsel Rp 50.000</option>
-                    <option value="101500" data-name="Token Listrik Rp 100.000">💡 Token Listrik Rp 100.000</option>
+                    <option value="htelkomsel25" data-name="Pulsa Telkomsel Rp 25.000 (htelkomsel25)">📱 Pulsa Telkomsel Rp 25.000</option>
+                    <option value="htelkomsel50" data-name="Pulsa Telkomsel Rp 50.000 (htelkomsel50)">📱 Pulsa Telkomsel Rp 50.000</option>
+                    <option value="pln100" data-name="Token Listrik Rp 100.000 (pln100)">💡 Token Listrik Rp 100.000</option>
                 </select>
             </div>
 
@@ -425,4 +425,175 @@
                     <label for="methodKuda">Token $KUDA (Diskon 5%)</label>
                 </div>
 
-                <div class="summary-box" id="
+                <div class="summary-box" id="summaryAmount">
+                    Total Tagihan: Menghitung...
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-pay" onclick="processPayment()">Bayar Sekarang</button>
+
+        <div class="history-section">
+            <div class="section-title">Riwayat Transaksi</div>
+            <div class="history-list" id="historyList">
+                <div class="history-card">
+                    <div class="history-info">
+                        <span class="history-title">Pulsa Telkomsel Rp 25.000</span>
+                        <span class="history-meta">01 Mei 2026 | 15:30</span>
+                    </div>
+                    <div class="history-amount">Rp 25.500</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="nav-footer">
+            <a href="#" class="nav-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Beranda</span>
+            </a>
+            <a href="#" class="nav-item" onclick="alert('Menu Riwayat dibuka')">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Riwayat</span>
+            </a>
+            <a href="#" class="nav-item" onclick="alert('Menu Berita/Promo dibuka')">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Promo</span>
+            </a>
+            <a href="#" class="nav-item" onclick="alert('Menu Akun / Profil')">
+                <i class="fa-solid fa-user"></i>
+                <span>Profil</span>
+            </a>
+        </footer>
+    </div>
+
+    <script>
+        // Inisialisasi TON Connect UI
+        const tonConnectUI = typeof TON_CONNECT_UI !== 'undefined' ? 
+            new TON_CONNECT_UI.TonConnectUI({
+                manifestUrl: 'https://kudaapi.com/tonconnect-manifest.json',
+                buttonRootId: 'ton-connect-button'
+            }) : null;
+
+        let userPoints = 3;
+
+        const HARGATON_IDR = 85000;
+        const RATIO_KUDA_TON = 0.001;
+        const DISKON_KUDA = 0.05;
+
+        function updateTotal() {
+            // Untuk perhitungan, kita pakai harga tiruan. 
+            // Jika Anda ingin mengambil dari harga riil, Anda bisa menyesuaikan nilainya (misal mengambil harga default dari select).
+            const serviceSelect = document.getElementById('serviceType');
+            const selectedValue = serviceSelect.value;
+            
+            // Contoh harga otomatis sesuai SKU:
+            let hargaIdr = 25500;
+            if (selectedValue.includes('50')) {
+                hargaIdr = 50500;
+            } else if (selectedValue.includes('pln')) {
+                hargaIdr = 101500;
+            }
+
+            const methodIdr = document.getElementById('methodIdr').checked;
+            const summaryElement = document.getElementById('summaryAmount');
+
+            if (methodIdr) {
+                summaryElement.innerHTML = `Total Tagihan: <strong>Rp ${hargaIdr.toLocaleString('id-ID')}</strong>`;
+            } else {
+                const hargaKudaIdr = RATIO_KUDA_TON * HARGATON_IDR;
+                const totalKuda = (hargaIdr / hargaKudaIdr) * (1 - DISKON_KUDA);
+                summaryElement.innerHTML = `Total Tagihan: <strong>${totalKuda.toFixed(2)} $KUDA</strong>`;
+            }
+        }
+
+        function updatePointUI() {
+            document.getElementById('pointDisplay').innerText = userPoints;
+        }
+
+        function tukarPoin() {
+            if (userPoints >= 10) {
+                userPoints -= 10;
+                updatePointUI();
+                alert("Berhasil menukar 10 Poin dengan 1 $KUDA! Token telah didistribusikan ke wallet Anda.");
+            } else {
+                alert("Poin tidak mencukupi! Kumpulkan minimal 10 Poin dari transaksi Anda untuk menukar dengan $KUDA.");
+            }
+        }
+
+        function addTransactionHistory(itemName, priceStr) {
+            const historyList = document.getElementById('historyList');
+            const now = new Date();
+            const dateString = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + 
+                               " | " + now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+
+            const card = document.createElement('div');
+            card.className = 'history-card';
+            card.innerHTML = `
+                <div class="history-info">
+                    <span class="history-title">${itemName}</span>
+                    <span class="history-meta">${dateString}</span>
+                </div>
+                <div class="history-amount">${priceStr}</div>
+            `;
+            historyList.prepend(card);
+        }
+
+        // Jalankan kalkulasi
+        updateTotal();
+        updatePointUI();
+
+        async function processPayment() {
+            const phone = document.getElementById('phoneNo').value;
+            const serviceSelect = document.getElementById('serviceType');
+            const buyerSkuCode = serviceSelect.value;
+            const selectedItem = serviceSelect.options[serviceSelect.selectedIndex].getAttribute('data-name');
+            const refId = 'KUDA-' + Date.now(); 
+
+            if (!phone) {
+                alert("Mohon masukkan nomor tujuan atau ID pelanggan Anda.");
+                return;
+            }
+
+            // Memanggil API Backend Vercel
+            try {
+                // Catatan: Jika aplikasi di-deploy di Vercel, URL ini akan otomatis diarahkan ke serverless functions Anda.
+                const response = await fetch('/api/transaksi', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        buyer_sku_code: buyerSkuCode,
+                        customer_no: phone,
+                        ref_id: refId
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert("Transaksi berhasil diproses oleh sistem $KUDA Pay!");
+                    
+                    // Tambahkan poin dan update UI
+                    userPoints += 1;
+                    updatePointUI();
+
+                    const isIdr = document.getElementById('methodIdr').checked;
+                    const priceString = isIdr ? `Rp ${document.getElementById('serviceType').value}` : "Token $KUDA";
+                    addTransactionHistory(selectedItem, priceString);
+                } else {
+                    alert("Transaksi gagal dari penyedia: " + result.message);
+                }
+            } catch (error) {
+                // Mode fallback/simulasi lokal jika backend belum di-deploy sepenuhnya
+                alert("Berhasil memproses (Simulasi)!");
+                userPoints += 1;
+                updatePointUI();
+                const isIdr = document.getElementById('methodIdr').checked;
+                const priceString = isIdr ? `Transaksi` : "Token $KUDA";
+                addTransactionHistory(selectedItem, priceString);
+            }
+        }
+    </script>
+</body>
+</html>
