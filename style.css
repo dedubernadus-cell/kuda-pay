@@ -1,0 +1,126 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body {
+    background-color: #0F111A;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+.container {
+    width: 100%;
+    max-width: 480px;
+    background: #1A1D2A;
+    border: 1.5px solid #D4AF37;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(212, 175, 55, 0.15);
+}
+h2 {
+    color: #D4AF37;
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+}
+.wallet-info {
+    background: #0F111A;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    border-left: 4px solid #2AABEE;
+    line-height: 1.5;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+label {
+    display: block;
+    margin-bottom: 6px;
+    color: #2AABEE;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+select, input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #0F111A;
+    color: #FFFFFF;
+    border: 1px solid #3A3F50;
+    border-radius: 8px;
+    outline: none;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+select:focus, input[type="text"]:focus {
+    border-color: #D4AF37;
+}
+.payment-box {
+    background: #0F111A;
+    padding: 16px;
+    border-radius: 10px;
+    margin: 18px 0;
+    border: 1px solid #3A3F50;
+}
+.payment-option {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+.payment-option input {
+    margin-right: 10px;
+}
+.payment-option label {
+    color: #FFFFFF;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+.summary-text {
+    margin-top: 12px;
+    font-size: 0.95em;
+    color: #A0ABB9;
+    padding: 8px;
+    background: #151925;
+    border-radius: 6px;
+    border-left: 3px solid #D4AF37;
+}
+.btn-pay {
+    width: 100%;
+    background: linear-gradient(90deg, #D4AF37, #FFC107);
+    color: #0F111A;
+    font-weight: bold;
+    font-size: 1.05em;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+.btn-pay:hover {
+    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+.history {
+    margin-top: 25px;
+    border-top: 1px solid #3A3F50;
+    padding-top: 15px;
+    font-size: 0.85em;
+    color: #8E9BAE;
+}
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.9em;
+}
+.success {
+    color: #2ed573;
+}

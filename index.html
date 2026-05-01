@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$KUDA Pay - Aplikasi PPOB Komunitas</title>
+    
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0B0E14;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 12px;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: #151928;
+            border: 1.5px solid #3A3F50;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            min-height: 85vh;
+        }
+        
+        /* Header Bagian Atas */
+        .header {
+            padding: 24px 20px;
+            background: linear-gradient(135deg, #1A1D2A 0%, #0F111A 100%);
+            border-bottom: 1px solid #242936;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 1.4rem;
+            color: #D4AF37;
+            font-weight: 700;
+        }
+        .header .user-badge {
+            background: #1F2433;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #2AABEE;
+            border: 1px solid #2AABEE;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            margin: 20px;
+            padding: 20px;
+            background: linear-gradient(90deg, #D4AF37, #FFC107);
+            color: #0B0E14;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.25);
+        }
+        .balance-card .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .balance-amount {
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+        .balance-sub {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            font-weight: 500;
+        }
+        .point-badge {
+            background: rgba(11, 14, 20, 0.85);
+            color: #FFC107;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1.5px solid #0B0E14;
+        }
+        .wallet-connect-wrapper {
+            margin-top: 6px;
+        }
+
+        /* Action Buttons */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+        .action-btn {
+            background: #1A1D2A;
+            border: 1px solid #242936;
+            padding: 10px 4px;
+            border-radius: 12px;
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .action-btn i {
+            font-size: 1.1rem;
+            color: #D4AF37;
+        }
+        .action-btn span {
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+        .action-btn:hover {
+            border-color: #D4AF37;
+            transform: translateY(-2px);
+        }
+
+        /* Menu Layanan (PPOB) */
+        .menu-section {
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 0.95rem;
+            color: #A0ABB9;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .service-item {
+            background: #1A1D2A;
+            padding: 10px 4px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .service-item i {
+            font-size: 1.2rem;
+            color: #2AABEE;
+        }
+        .service-item span {
+            font-size: 0.65rem;
+            color: #E2E8F0;
+            text-align: center;
+        }
+        .service-item:hover {
+            border-color: #2AABEE;
+        }
+
+        /* Form Transaksi */
+        .form-section {
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #2AABEE;
+            margin-bottom: 6px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: #1A1D2A;
+            border: 1px solid #242936;
+            color: #FFFFFF;
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            border-color: #D4AF37;
+        }
+        
+        .payment-box {
+            background: #1A1D2A;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid #242936;
+            margin-top: 12px;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .payment-option:last-child {
+            margin-bottom: 0;
+        }
+        
+        .summary-box {
+            background: #10131B;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 3px solid #D4AF37;
+            font-size: 0.85rem;
+            color: #A0ABB9;
+        }
+
+        /* Tombol Transaksi */
+        .btn-pay {
+            margin: 0 20px 20px 20px;
+            background: linear-gradient(90deg, #D4AF37, #FFC107);
+            color: #0B0E14;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-pay:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Riwayat Transaksi */
+        .history-section {
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .history-card {
+            background: #1A1D2A;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #2ed573;
+        }
+        .history-card.pending {
+            border-left-color: #ffaa00;
+        }
+        .history-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .history-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .history-meta {
+            font-size: 0.75rem;
+            color: #7B8898;
+        }
+        .history-amount {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        /* Footer / Navigasi Bawah */
+        .nav-footer {
+            margin-top: auto;
+            border-top: 1px solid #242936;
+            display: flex;
+            justify-content: space-around;
+            padding: 14px 0;
+            background: #0F111A;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #7B8898;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.75rem;
+        }
+        .nav-item.active, .nav-item:hover {
+            color: #D4AF37;
+        }
+        .nav-item i {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="header">
+            <h1>⚡ $KUDA Pay</h1>
+            <div class="user-badge"><i class="fa-solid fa-wallet"></i> TON Mainnet</div>
+        </header>
+
+        <div class="balance-card">
+            <div class="row">
+                <span class="balance-sub">Total Saldo Terpadu</span>
+                <div class="point-badge">
+                    <i class="fa-solid fa-star"></i> <span id="pointDisplay">3</span> Poin
+                </div>
+            </div>
+            <div class="balance-amount">Rp 150.000 / 500 $KUDA</div>
+            <div class="wallet-connect-wrapper">
+                <div id="ton-connect-button"></div>
+            </div>
+        </div>
+
+        <div class="actions-grid">
+            <button class="action-btn" onclick="alert('Menu Deposit Rupiah dibuka.')">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Deposit</span>
+            </button>
+            <button class="action-btn" onclick="alert('Membuka Scan QRIS.')">
+                <i class="fa-solid fa-qrcode"></i>
+                <span>QRIS Pay</span>
+            </button>
+            <button class="action-btn" onclick="tukarPoin()">
+                <i class="fa-solid fa-gift"></i>
+                <span>Tukar Poin</span>
+            </button>
+            <button class="action-btn" onclick="alert('Menampilkan Voucher & Diskon.')">
+                <i class="fa-solid fa-tags"></i>
+                <span>Voucher</span>
+            </button>
+        </div>
+
+        <div class="menu-section">
+            <div class="section-title">Layanan Produk PPOB</div>
+            <div class="services-grid">
+                <div class="service-item" onclick="document.getElementById('serviceType').value='25500'; updateTotal();">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <span>Pulsa</span>
+                </div>
+                <div class="service-item" onclick="document.getElementById('serviceType').value='101500'; updateTotal();">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Listrik</span>
+                </div>
+                <div class="service-item" onclick="alert('Layanan E-Wallet dipilih')">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>E-Wallet</span>
+                </div>
+                <div class="service-item" onclick="alert('Layanan Paket Data dipilih')">
+                    <i class="fa-solid fa-globe"></i>
+                    <span>Data</span>
+                </div>
+                <div class="service-item" onclick="alert('Layanan PDAM dipilih')">
+                    <i class="fa-solid fa-faucet"></i>
+                    <span>PDAM</span>
+                </div>
+                <div class="service-item" onclick="alert('Layanan BPJS dipilih')">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>BPJS</span>
+                </div>
+                <div class="service-item" onclick="alert('Layanan Game dipilih')">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span>Voucher</span>
+                </div>
+                <div class="service-item" onclick="alert('Layanan TV dipilih')">
+                    <i class="fa-solid fa-tv"></i>
+                    <span>TV Kabel</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">Formulir Pembelian</div>
+            
+            <div class="form-group">
+                <label for="serviceType">Pilih Layanan</label>
+                <select id="serviceType" class="form-control" onchange="updateTotal()">
+                    <option value="25500" data-name="Pulsa Telkomsel Rp 25.000">📱 Pulsa Telkomsel Rp 25.000</option>
+                    <option value="50500" data-name="Pulsa Telkomsel Rp 50.000">📱 Pulsa Telkomsel Rp 50.000</option>
+                    <option value="101500" data-name="Token Listrik Rp 100.000">💡 Token Listrik Rp 100.000</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNo">Nomor Tujuan / ID Pelanggan</label>
+                <input type="text" id="phoneNo" class="form-control" placeholder="Contoh: 081234567890">
+            </div>
+
+            <div class="payment-box">
+                <label style="font-size: 0.8rem; color: #2AABEE; margin-bottom: 8px; display: block;">Metode Pembayaran</label>
+                
+                <div class="payment-option">
+                    <input type="radio" name="paymentMethod" id="methodIdr" value="idr" checked onchange="updateTotal()">
+                    <label for="methodIdr">Mata Uang Rupiah (IDR)</label>
+                </div>
+                
+                <div class="payment-option">
+                    <input type="radio" name="paymentMethod" id="methodKuda" value="kuda" onchange="updateTotal()">
+                    <label for="methodKuda">Token $KUDA (Diskon 5%)</label>
+                </div>
+
+                <div class="summary-box" id="
